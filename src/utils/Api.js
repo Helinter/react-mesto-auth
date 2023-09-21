@@ -1,7 +1,13 @@
+import { apiConfig } from './constants';
+import { getToken } from '../components/TokenHelper'
+
 export class Api {
   constructor(config) {
     this.url = config.url;
-    this.headers = config.headers;
+    this.headers = {
+      ...config.headers,
+      'Authorization': `fd0f9f25-2a5d-4f26-a017-454ad9a03645`,
+    };
   }
 
   // Метод для проверки ответа от сервера
@@ -65,21 +71,15 @@ export class Api {
     return this._checkResponse(res);
   }
 
-  async addLike(cardId) {
+  async changeLikeCardStatus(cardId, isLiked) {
+    const method = isLiked ? 'PUT' : 'DELETE';
     const res = await fetch(`${this.url}/cards/likes/${cardId}`, {
-      method: 'PUT',
+      method,
       headers: this.headers
     });
     return this._checkResponse(res);
   }
-
-  async deleteLike(cardId) {
-    const res = await fetch(`${this.url}/cards/likes/${cardId}`, {
-      method: 'DELETE',
-      headers: this.headers
-    });
-    return this._checkResponse(res);
-  }
+  
 
   async updateAvatar(avatarLink) {
     const res = await fetch(`${this.url}/users/me/avatar`, {
@@ -92,3 +92,6 @@ export class Api {
     return this._checkResponse(res);
   }
 }
+
+export const api = new Api(apiConfig);
+
