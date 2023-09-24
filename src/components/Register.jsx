@@ -1,11 +1,20 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom'; // Импортируем Link
+import { Link } from 'react-router-dom';
 import Header from './Header';
 import { authApi } from './AuthApi';
+import Modal from './Modal';
+import Unioner from '../images/Unioner.svg';
+import Union from '../images/Union.svg';
 
 function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const [isRegistered, setIsRegistered] = useState(false); 
+const [error, setError] = useState(null); 
+
+const [imageSrc, setImageSrc] = useState(''); // Путь к изображению
+
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -17,14 +26,20 @@ function Register() {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-
+  
     try {
       const response = await authApi.register(email, password);
       console.log('Успешная регистрация:', response);
+      setIsRegistered(true);
+      setImageSrc(Union); // Путь к изображению при успешной регистрации
     } catch (error) {
       console.error('Ошибка регистрации:', error);
+      setError(error.message || 'Что-то пошло не так! Попробуйте ещё раз.');
+      setImageSrc(Unioner); // Путь к изображению при ошибке
     }
   };
+  
+  
 
   return (
     <>
@@ -59,9 +74,23 @@ function Register() {
           </button>
              <Link className="sign-up__link" to="/sign-in">Уже зарегистрированы? Войти</Link>
           
-        </form>
-      </div>
-    </>
+        </form> {isRegistered && (
+        <Modal
+        message="Вы успешно зарегистрировались!"
+        onClose={() => setIsRegistered(false)}
+        imageSrc={imageSrc}
+      />
+      
+      )}
+      {error && (
+        <Modal
+          message="Что-то пошло не так! Попробуйте ещё раз."
+          onClose={() => setError(null)}
+          imageSrc={imageSrc}
+        />
+      )}
+    </div>
+  </>
   );
 }
 

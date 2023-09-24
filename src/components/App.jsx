@@ -65,7 +65,7 @@ function App() {
     setSelectedCard(card);
     setImagePopupOpen(true);
   };
-console.log(1)
+
 
   // Обработчики для открытия/закрытия попапов
   const handleEditProfileClick = () => {
