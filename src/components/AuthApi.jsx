@@ -6,27 +6,23 @@ export class AuthApi {
     this.headers = config.headers;
   }
 
-async getUserInfo() {
-  const token = localStorage.getItem('token'); // Получаем токен из localStorage
-  if (!token) {
-    return Promise.reject('Токен не найден'); // Если токен отсутствует, возвращаем ошибку
+  async getUserInfo() {
+    const token = localStorage.getItem('token'); // Получаем токен из localStorage
+    if (!token) {
+      return Promise.reject('Токен не найден'); // Если токен отсутствует, возвращаем ошибку
+    }
+  
+    const res = await fetch(`${this.url}/users/me`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  
+    return this._checkResponse(res); 
   }
-
-  const res = await fetch(`${this.url}/users/me`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-    },
-  });
-
-  if (res.ok) {
-    const data = await res.json();
-    return data.data; 
-  }
-
-  return Promise.reject(`Ошибка: ${res.status}`);
-}
+  
 
 
 

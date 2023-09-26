@@ -2,6 +2,8 @@ import React, { useRef } from 'react';
 import addButton from '../images/add-button.svg';
 import Card from './Card';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
+import Header from './Header';
+import Footer from './Footer';
 
 function Main({
   onEditProfile,
@@ -17,6 +19,7 @@ function Main({
   const elementRef = useRef();
   return (
     <>
+    <Header linkTo="/sign-in" linkName="Выйти" email={currentUser.email}/>
       <section className="profile">
         <div className="profile__avatar-container" src={`url(${currentUser.avatar})` }>
           <img className="profile__avatar" src={currentUser.avatar} alt="аватар" />
@@ -36,6 +39,7 @@ function Main({
           <Card key={card._id} card={card} handleClick={onCardClick}  handleLikeClick ={onCardLike} handleDeleteClick={onCardDelete}/>  
         ))}
       </section>
+      <Footer />
     </>
   );
 }

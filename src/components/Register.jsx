@@ -10,10 +10,9 @@ function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const [isRegistered, setIsRegistered] = useState(false); 
-const [error, setError] = useState(null); 
-
-const [imageSrc, setImageSrc] = useState(''); // Путь к изображению
+  const [isRegistered, setIsRegistered] = useState(false);
+  const [error, setError] = useState(null);
+  const [imageSrc, setImageSrc] = useState(''); // Путь к изображению
 
 
   const handleEmailChange = (e) => {
@@ -26,7 +25,7 @@ const [imageSrc, setImageSrc] = useState(''); // Путь к изображен�
 
   const handleRegister = async (e) => {
     e.preventDefault();
-  
+
     try {
       const response = await authApi.register(email, password);
       console.log('Успешная регистрация:', response);
@@ -38,8 +37,8 @@ const [imageSrc, setImageSrc] = useState(''); // Путь к изображен�
       setImageSrc(Unioner); // Путь к изображению при ошибке
     }
   };
-  
-  
+
+
 
   return (
     <>
@@ -72,25 +71,25 @@ const [imageSrc, setImageSrc] = useState(''); // Путь к изображен�
           <button type="submit" className="sign-in__button" id="SignInSubmit">
             Зарегистрироваться
           </button>
-             <Link className="sign-up__link" to="/sign-in">Уже зарегистрированы? Войти</Link>
-          
+          <Link className="sign-up__link" to="/sign-in">Уже зарегистрированы? Войти</Link>
+
         </form> {isRegistered && (
-        <Modal
-        message="Вы успешно зарегистрировались!"
-        onClose={() => setIsRegistered(false)}
-        imageSrc={imageSrc}
-      />
-      
-      )}
-      {error && (
-        <Modal
-          message="Что-то пошло не так! Попробуйте ещё раз."
-          onClose={() => setError(null)}
-          imageSrc={imageSrc}
-        />
-      )}
-    </div>
-  </>
+          <Modal
+            message="Вы успешно зарегистрировались!"
+            onClose={() => setIsRegistered(false)}
+            imageSrc={imageSrc}
+          />
+
+        )}
+        {error && (
+          <Modal
+            message="Что-то пошло не так! Попробуйте ещё раз."
+            onClose={() => setError(null)}
+            imageSrc={imageSrc}
+          />
+        )}
+      </div>
+    </>
   );
 }
 

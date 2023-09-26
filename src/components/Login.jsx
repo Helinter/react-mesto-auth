@@ -30,7 +30,7 @@ function Login() {
   
       if (userData) {
         // Сохраняем email пользователя в localStorage
-        localStorage.setItem('email', userData.email);
+        localStorage.setItem('email', userData.data.email);
         navigate('/');
       } else {
         console.error('Email пользователя не найден');

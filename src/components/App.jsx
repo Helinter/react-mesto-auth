@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import Header from './Header';
 import Main from './Main';
-import Footer from './Footer';
 import ImagePopup from './ImagePopup';
 import PopupWithForm from './PopupWithForm';
 import { api } from '../utils/Api';
@@ -9,6 +7,10 @@ import EditProfilePopup from './EditProfilePopup';
 import EditAvatarPopup from './EditAvatarPopup';
 import AddPlacePopup from './AddPlacePopup';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
+import ProtectedRouteElement from './ProtectedRoute';
+import Register from './Register';
+import Login from './Login';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 function App() {
   
@@ -125,10 +127,15 @@ function App() {
   };
 
   return (
-   
+
+    
+    <Router>
       <div className="page">
-        <Header linkTo="/sign-in" linkName="Выйти" email={currentUser.email}/>
-        <Main
+                
+        <Routes>
+          <Route path="/sign-up" element={<Register />} />
+          <Route path="/sign-in" element={<Login />} />
+          <Route path="/" element={<ProtectedRouteElement  element={ Main }
           onEditProfile={handleEditProfileClick}
           onAddPlace={handleAddPlaceClick}
           onEditAvatar={handleEditAvatarClick}
@@ -137,33 +144,23 @@ function App() {
           cards={cards}
           onCardLike={handleLikeClick}
           onCardDelete={handleDeleteClick}
-        />
-        <Footer />
+        />} />
+        </Routes>
 
         <ImagePopup link={selectedCard?.link} name={selectedCard?.name} isOpen={isImagePopupOpen} onClose={closeAllPopups} />
 
         <EditProfilePopup  isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser}/> 
 
-        
-
         <AddPlacePopup   isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace ={handleAddPlaceSubmit}/> 
 
-
-
-        <PopupWithForm
-          title="Вы уверены?"
-          name="deleteForm"
-          isOpen={isDeletePopupOpen}
-          onClose={closeAllPopups}
-        >
+        <PopupWithForm title="Вы уверены?" name="deleteForm" isOpen={isDeletePopupOpen} onClose={closeAllPopups}>
           <button type="submit" className="popup__container-button popup__container-button_type_delete" id="deleteSubmit">Да</button>
         </PopupWithForm>
-
+        
         <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar}/>
-
       
       </div>
-    
+      </Router>
   );
 }
 
