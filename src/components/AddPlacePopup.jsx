@@ -5,6 +5,7 @@ export default function AddPlacePopup({ isOpen, onClose, onAddPlace }) {
   const [placeName, setPlaceName] = useState('');
   const [placeLink, setPlaceLink] = useState('');
 
+
   useEffect(() => {
     if (!isOpen) {
       // При закрытии попапа сбрасываем значения инпутов

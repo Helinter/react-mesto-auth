@@ -10,10 +10,11 @@ import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import ProtectedRouteElement from './ProtectedRoute';
 import Register from './Register';
 import Login from './Login';
+import Modal from './Modal';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 function App() {
-  
+
   const [isEditProfilePopupOpen, setEditProfilePopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setAddPlacePopupOpen] = useState(false);
   const [isEditAvatarPopupOpen, setEditAvatarPopupOpen] = useState(false);
@@ -23,8 +24,10 @@ function App() {
   const [cards, setCards] = useState([]);
   const { currentUser, setCurrentUser } = useContext(CurrentUserContext);
 
+  const [isRegistered, setIsRegistered] = useState(false);
+  const [error, setError] = useState(null);
+  const [imageSrc, setImageSrc] = useState(''); // Путь к изображению
 
-  
 
   useEffect(() => {
     Promise.all([api.getUserInfo(), api.getCards()])
@@ -39,7 +42,7 @@ function App() {
 
   const handleLikeClick = (card) => {
     const isLiked = card.likes.some(i => i._id === currentUser._id);
-    
+
     api.changeLikeCardStatus(card._id, !isLiked)
       .then((newCard) => {
         setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
@@ -61,7 +64,7 @@ function App() {
       });
   };
 
-  
+
 
   const handleCardClick = (card) => {
     setSelectedCard(card);
@@ -82,14 +85,14 @@ function App() {
     setEditAvatarPopupOpen(true);
   };
 
-  const handleUpdateUser = ({ name, about }) =>{
-    api.updateProfile(name, about).then((res)=>{
+  const handleUpdateUser = ({ name, about }) => {
+    api.updateProfile(name, about).then((res) => {
       setCurrentUser(res)
       closeAllPopups();
     })
-    .catch((error) => {
-      console.error('Ошибка при обновлении данных о пользователе:', error);
-    });
+      .catch((error) => {
+        console.error('Ошибка при обновлении данных о пользователе:', error);
+      });
   }
 
   const handleUpdateAvatar = (newAvatar) => {
@@ -102,8 +105,8 @@ function App() {
         console.error('Ошибка при обновлении аватара:', error);
       });
   }
-  
-  const handleAddPlaceSubmit = ({name, link}) => {
+
+  const handleAddPlaceSubmit = ({ name, link }) => {
     // Отправляем запрос на сервер для создания карточки
     api.addCard(name, link)
       .then((createdCard) => {
@@ -115,7 +118,7 @@ function App() {
         console.error('Ошибка при создании карточки:', error);
       });
   }
-  
+
 
 
   const closeAllPopups = () => {
@@ -128,39 +131,60 @@ function App() {
 
   return (
 
-    
+
     <Router>
       <div className="page">
-                
+
         <Routes>
-          <Route path="/sign-up" element={<Register />} />
+          <Route path="/sign-up" element={<Register
+            setIsRegistered={setIsRegistered}
+            setImageSrc={setImageSrc}
+            setError={setError}
+          />} />
           <Route path="/sign-in" element={<Login />} />
-          <Route path="/" element={<ProtectedRouteElement  element={ Main }
-          onEditProfile={handleEditProfileClick}
-          onAddPlace={handleAddPlaceClick}
-          onEditAvatar={handleEditAvatarClick}
-          closeAllPopups={closeAllPopups}
-          onCardClick={handleCardClick}
-          cards={cards}
-          onCardLike={handleLikeClick}
-          onCardDelete={handleDeleteClick}
-        />} />
+          <Route path="/" element={<ProtectedRouteElement element={Main}
+            onEditProfile={handleEditProfileClick}
+            onAddPlace={handleAddPlaceClick}
+            onEditAvatar={handleEditAvatarClick}
+            closeAllPopups={closeAllPopups}
+            onCardClick={handleCardClick}
+            cards={cards}
+            onCardLike={handleLikeClick}
+            onCardDelete={handleDeleteClick}
+          />} />
         </Routes>
 
         <ImagePopup link={selectedCard?.link} name={selectedCard?.name} isOpen={isImagePopupOpen} onClose={closeAllPopups} />
 
-        <EditProfilePopup  isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser}/> 
+        <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
 
-        <AddPlacePopup   isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace ={handleAddPlaceSubmit}/> 
+        <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlaceSubmit} />
 
         <PopupWithForm title="Вы уверены?" name="deleteForm" isOpen={isDeletePopupOpen} onClose={closeAllPopups}>
           <button type="submit" className="popup__container-button popup__container-button_type_delete" id="deleteSubmit">Да</button>
         </PopupWithForm>
-        
-        <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar}/>
-      
+
+        <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} />
+
+        {isRegistered && (
+          <Modal
+            message="Вы успешно зарегистрировались!"
+            onClose={() => setIsRegistered(false)}
+            imageSrc={imageSrc}
+          />
+        )}
+
+        {error && (
+          <Modal
+            message="Что-то пошло не так! Попробуйте ещё раз."
+            onClose={() => setError(null)}
+            imageSrc={imageSrc}
+          />
+        )}
+
+
       </div>
-      </Router>
+    </Router>
   );
 }
 
